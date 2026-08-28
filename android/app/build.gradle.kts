@@ -1,4 +1,4 @@
-﻿plugins {
+plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
@@ -34,10 +34,10 @@ android {
     }
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-    }
+// jvmTarget definido por task, em vez do DSL de topo do Kotlin, que exige
+// Kotlin Gradle Plugin 2.1+. Esta forma funciona do KGP 1.8 ao 2.x.
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.jvmTarget = "17"
 }
 
 flutter {
