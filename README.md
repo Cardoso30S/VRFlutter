@@ -247,17 +247,20 @@ está declarada no `pubspec.yaml` — nenhum ajuste é necessário.
 ### Se o Gradle falhar
 
 Os arquivos em `android/` são **boilerplate gerado pelo `flutter create`**, não
-código deste projeto. Dependendo da combinação Flutter × AGP × Kotlin Gradle
-Plugin instalada na máquina, o template sai com um DSL que o plugin presente
-não entende:
+código deste projeto. O erro aparece quando a máquina tem um Android Gradle
+Plugin novo demais para o template do Flutter:
 
 ```
-e: android/app/build.gradle.kts:38:5: Unresolved reference 'compilerOptions'
 Line 07: android {
-         ^ 'fun Project.android(...)' is deprecated.
+         ^ 'fun Project.android(...)' is deprecated. Replaced by
+           com.android.build.api.dsl.ApplicationExtension.
 ```
 
-Rode o corretor — ele é idempotente:
+Isso **não é um aviso**. No Kotlin, uma API marcada com `DeprecationLevel.ERROR`
+vira erro de compilação — por isso o Gradle conta a depreciação entre os
+"N errors". O template usa o bloco `android { }` clássico, que o AGP 9 marca
+nesse nível. **Nenhuma edição do `build.gradle.kts` resolve**: é preciso usar
+um AGP 8.x.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tool\fix_gradle.ps1   # Windows
@@ -266,15 +269,14 @@ powershell -ExecutionPolicy Bypass -File tool\fix_gradle.ps1   # Windows
 tool/fix_gradle.sh                                            # Linux/macOS
 ```
 
-Ele aplica duas correções independentes:
+O script escolhe o par AGP/Kotlin conforme o Gradle do wrapper (AGP 8.11+ é o
+primeiro que suporta Gradle 9), restaura o bloco `kotlin { compilerOptions }`
+canônico do template e imprime um diagnóstico com as quatro versões que
+importam. É idempotente. Para fixar versões específicas:
 
-- **`android.newDsl=false`** em `android/gradle.properties`. A partir do AGP
-  9.0 o "novo DSL" é o padrão, e nele o bloco `android { }` clássico que o
-  template usa vira API depreciada com nível `ERROR` — o que quebra a
-  compilação do script Gradle.
-- **`kotlin { compilerOptions { jvmTarget = ... } }`** (exige KGP 2.1+) é
-  trocado por `tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "17" }`,
-  que funciona do KGP 1.8 ao 2.x.
+```powershell
+powershell -ExecutionPolicy Bypass -File tool\fix_gradle.ps1 -Agp 8.7.3 -Kotlin 2.1.0
+```
 
 Depois: `flutter clean && flutter run --release`.
 
