@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <!--
+    viewport-fit=cover + user-scalable=no: o canvas precisa cobrir exatamente
+    a tela fisica. Qualquer zoom/scroll do WebView quebraria o alinhamento
+    estereo com as lentes.
+  -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>VR Dino - Cena</title>
+  <style>
+    :root { color-scheme: dark; }
+    html, body {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      overflow: hidden; background: #06080c;
+      touch-action: none;            /* nenhum gesto do navegador */
+      -webkit-user-select: none; user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+    #gl { display: block; width: 100%; height: 100%; }
+    #fatal {
+      position: fixed; inset: 0; display: none;
+      align-items: center; justify-content: center; padding: 24px;
+      font: 13px/1.6 -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #ffb4a9; background: #14090a; text-align: center;
+    }
+    #fatal.on { display: flex; }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <div id="fatal"></div>
+
+  <script>
+  /**
+   * Carregador de dependencias.
+   *
+   * Ordem de preferencia:
+   *   1. `assets/web/vendor/` (offline, populado por tool/fetch_web_deps.sh)
+   *   2. CDN jsDelivr (exige rede no dispositivo)
+   *
+   * O import map precisa ser injetado ANTES de qualquer resolucao de modulo,
+   * por isso todo o processo acontece neste script classico e o entrypoint e
+   * carregado por `import()` dinamico no final.
+   */
+  (function () {
+    'use strict';
+
+    var THREE_VERSION = '0.160.1';
+    var CDN = 'https://cdn.jsdelivr.net/npm/three@' + THREE_VERSION + '/';
+
+    function fatal(msg) {
+      var el = document.getElementById('fatal');
+      el.textContent = msg;
+      el.className = 'on';
+      try {
+        window.flutter_inappwebview.callHandler('vrError', msg);
+      } catch (e) { /* fora do Flutter (debug no browser) */ }
+    }
+
+    // Import maps chegaram no Chrome 89 e no Safari/WKWebView 16.4.
+    if (!(window.HTMLScriptElement && HTMLScriptElement.supports &&
+          HTMLScriptElement.supports('importmap'))) {
+      fatal('Este WebView nao suporta import maps (requer Android WebView 89+ ' +
+            'ou iOS 16.4+). Atualize o System WebView / o sistema.');
+      return;
+    }
+
+    function head(url) {
+      return fetch(url, { method: 'GET', cache: 'force-cache' })
+        .then(function (r) { return r.ok; })
+        .catch(function () { return false; });
+    }
+
+    head('./vendor/three.module.js').then(function (hasLocal) {
+      var map = hasLocal
+        ? { three: './vendor/three.module.js', 'three/addons/': './vendor/' }
+        : { three: CDN + 'build/three.module.js', 'three/addons/': CDN + 'examples/jsm/' };
+
+      var tag = document.createElement('script');
+      tag.type = 'importmap';
+      tag.textContent = JSON.stringify({ imports: map });
+      document.head.appendChild(tag);
+
+      window.__VR_ASSET_SOURCE__ = hasLocal ? 'vendor' : 'cdn';
+
+      import('./js/main.js').catch(function (err) {
+        fatal('Falha ao carregar a cena 3D: ' + (err && err.message ? err.message : err) +
+              (hasLocal ? '' : '\n\nDica: rode tool/fetch_web_deps.sh para embutir o ' +
+               'three.js no app e funcionar offline.'));
+      });
+    });
+
+    window.addEventListener('error', function (e) {
+      if (e && e.message) {
+        try { window.flutter_inappwebview.callHandler('vrLog', 'window.error: ' + e.message); }
+        catch (_) {}
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

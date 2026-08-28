@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>VR Dino</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>vr_dino_cardboard</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+
+	<!-- ====================================================================
+	     SENSORES
+	     ====================================================================
+	     O iOS exige uma justificativa em linguagem natural para o CoreMotion
+	     (usado pelo sensors_plus). Sem esta chave o app e ENCERRADO pelo
+	     sistema na primeira leitura do giroscopio.
+	-->
+	<key>NSMotionUsageDescription</key>
+	<string>O giroscopio e o acelerometro sao usados para acompanhar o movimento da sua cabeca e girar a camera dentro do ambiente pre-historico.</string>
+
+	<!-- Exige giroscopio na App Store (remova se quiser permitir o modo
+	     somente-acelerometro em aparelhos sem giroscopio). -->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+		<string>gyroscope</string>
+		<string>accelerometer</string>
+	</array>
+
+	<!-- ====================================================================
+	     REDE LOCAL
+	     ====================================================================
+	     A cena e servida por HTTP em 127.0.0.1 (InAppLocalhostServer).
+	     `NSAllowsLocalNetworking` libera o loopback sem abrir excecao de ATS
+	     para a internet inteira.
+	-->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<false/>
+	</dict>
+
+	<!-- ====================================================================
+	     ORIENTACAO E TELA
+	     ====================================================================
+	     Somente paisagem: o visor Cardboard e horizontal. Declarar apenas
+	     essas orientacoes evita um relayout caro do contexto WebGL.
+	-->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<!-- Esconde a barra de status e o indicador de home: qualquer overlay
+	     do sistema aparece fora de foco e incomoda dentro do visor. -->
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+
+	<!-- Reproducao inline de midia dentro do WKWebView (necessario caso voce
+	     adicione video/audio ambiente na cena). -->
+	<key>UIWebViewAllowsInlineMediaPlayback</key>
+	<true/>
+
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+</dict>
+</plist>

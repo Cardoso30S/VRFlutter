@@ -1,0 +1,42 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+*.jks
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Podfile.lock
+
+# macOS
+.DS_Store
+
+# Dependencias web baixadas por tool/fetch_web_deps.sh
+assets/web/vendor/*
+!assets/web/vendor/.gitkeep
+
+# Modelos 3D binarios (baixe com tool/fetch_models.sh ou coloque manualmente)
+assets/models/*.glb
+assets/models/*.gltf
+assets/models/*.bin

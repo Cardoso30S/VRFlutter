@@ -1,0 +1,50 @@
+name: vr_dino_cardboard
+description: >-
+  Experiencia VR estilo Google Cardboard (estereoscopia side-by-side) em Flutter,
+  com ambiente pre-historico renderizado em WebGL/Three.js e head-tracking nativo.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # --- Renderizacao -------------------------------------------------------
+  # WebView de alta performance com aceleracao de hardware, servidor HTTP local
+  # (necessario para ES Modules) e ponte JS <-> Dart de baixa latencia.
+  flutter_inappwebview: ^6.1.5
+
+  # --- Sensores -----------------------------------------------------------
+  # Giroscopio + acelerometro nativos. Taxa de amostragem configuravel
+  # (SensorInterval.gameInterval ~= 50Hz), muito superior e mais estavel do que
+  # o DeviceOrientationEvent do navegador.
+  sensors_plus: ^6.1.1
+
+  # --- Matematica ---------------------------------------------------------
+  # Quaternions/matrizes. E a mesma lib que o proprio Flutter usa internamente.
+  vector_math: ^2.1.4
+
+  # --- Utilidades ---------------------------------------------------------
+  # Impede o desligamento da tela durante a sessao VR.
+  wakelock_plus: ^1.2.10
+  # Persistencia das preferencias (IPD, distorcao, velocidade...).
+  shared_preferences: ^2.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    # A cena WebGL e servida via InAppLocalhostServer a partir destes assets.
+    - assets/web/
+    - assets/web/js/
+    - assets/web/vendor/
+    # Modelos .glb/.gltf + manifesto da cena.
+    - assets/models/

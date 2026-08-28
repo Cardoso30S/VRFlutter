@@ -1,0 +1,92 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      ==========================================================================
+      PERMISSOES E FEATURES
+      ==========================================================================
+      Sensores de movimento (acelerometro/giroscopio) NAO exigem permissao em
+      runtime no Android; exigem apenas a declaracao das features abaixo, que
+      tambem servem de filtro na Play Store.
+
+      `required="true"` no giroscopio e proposital: sem giroscopio nao existe
+      head-tracking utilizavel. Se voce quiser publicar mesmo assim (caindo no
+      modo somente-acelerometro implementado em HeadTracker), troque para
+      "false".
+    -->
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+
+    <!-- WebGL 2.0 -->
+    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+
+    <!-- Necessario apenas se voce carregar three.js do CDN (fallback).
+         Com tool/fetch_web_deps.sh o app funciona 100% offline, mas o
+         InAppLocalhostServer continua exigindo INTERNET para o socket local. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Mantem a tela ligada durante a sessao VR (wakelock_plus). -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Feedback tatil ao recentralizar a visao. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:label="VR Dino Cardboard"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize"
+
+            android:theme="@style/LaunchTheme"
+
+            android:screenOrientation="sensorLandscape"
+            android:resizeableActivity="false"
+
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+
+            android:showWhenLocked="false"
+            android:turnScreenOn="false">
+
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!--
+              Cardboard/Daydream: alguns visores emitem este intent ao encaixar
+              o aparelho (deteccao por NFC). Mantido para compatibilidade.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="cardboard" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
+</manifest>

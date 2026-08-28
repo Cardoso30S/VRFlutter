@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "note": "Coloque os arquivos .glb nesta pasta. Toda especie sem modelo cai automaticamente no dinossauro procedural equivalente.",
+  "dinosaurs": [
+    {
+      "id": "trex",
+      "name": "Tyrannosaurus rex",
+      "model": "trex.glb",
+      "targetHeight": 5.6,
+      "yOffset": 0,
+      "colliderRadius": 1.8,
+      "animations": { "idle": "Idle", "walk": "Walk" },
+      "fallback": { "kind": "theropod", "scale": 1.0, "color": "6b5a3a" },
+      "behavior": {
+        "speed": 1.6,
+        "turnRate": 0.7,
+        "roamRadius": 30,
+        "curious": true,
+        "personalSpace": 7
+      },
+      "spawns": [
+        { "x": -18, "z": -26, "heading": 1.1 },
+        { "x": 34, "z": 12, "heading": -2.2 }
+      ]
+    },
+    {
+      "id": "triceratops",
+      "name": "Triceratops horridus",
+      "model": "triceratops.glb",
+      "targetHeight": 3.1,
+      "yOffset": 0,
+      "colliderRadius": 1.6,
+      "animations": { "idle": "Idle", "walk": "Walk" },
+      "fallback": { "kind": "ceratopsian", "scale": 1.0, "color": "6f5c46" },
+      "behavior": {
+        "speed": 1.1,
+        "turnRate": 0.8,
+        "roamRadius": 22,
+        "curious": false,
+        "personalSpace": 5
+      },
+      "spawns": [
+        { "x": 14, "z": -18 },
+        { "x": 22, "z": -30 },
+        { "x": 6, "z": -34 }
+      ]
+    },
+    {
+      "id": "brachiosaurus",
+      "name": "Brachiosaurus altithorax",
+      "model": "brachiosaurus.glb",
+      "targetHeight": 12.0,
+      "yOffset": 0,
+      "colliderRadius": 2.6,
+      "animations": { "idle": "Idle", "walk": "Walk" },
+      "fallback": { "kind": "sauropod", "scale": 1.25, "color": "5d6b52" },
+      "behavior": {
+        "speed": 0.8,
+        "turnRate": 0.35,
+        "roamRadius": 40,
+        "curious": false,
+        "personalSpace": 8
+      },
+      "spawns": [
+        { "x": -46, "z": 30 },
+        { "x": -58, "z": 8 }
+      ]
+    },
+    {
+      "id": "velociraptor",
+      "name": "Velociraptor mongoliensis",
+      "model": "velociraptor.glb",
+      "targetHeight": 1.7,
+      "yOffset": 0,
+      "colliderRadius": 0.7,
+      "animations": { "idle": "Idle", "walk": "Run" },
+      "fallback": { "kind": "theropod", "scale": 0.35, "color": "7d5230" },
+      "behavior": {
+        "speed": 2.9,
+        "turnRate": 1.8,
+        "roamRadius": 45,
+        "curious": true,
+        "personalSpace": 4
+      },
+      "spawns": [
+        { "x": -30, "z": 42 },
+        { "x": -24, "z": 48 },
+        { "x": -36, "z": 46 }
+      ]
+    }
+  ]
+}

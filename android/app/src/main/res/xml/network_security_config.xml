@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  O InAppLocalhostServer serve os assets da cena por HTTP em 127.0.0.1:8099.
+  A partir do Android 9 (API 28) o trafego em texto puro e bloqueado por
+  padrao; em vez de reabrir cleartext para a internet inteira
+  (`usesCleartextTraffic="true"`), liberamos SOMENTE o loopback.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
