@@ -51,8 +51,10 @@ Dicas:
   npx @gltf-transform/cli optimize entrada.glb saida.glb --texture-compress webp
   ```
 
-  Se usar Draco, rode `tool/fetch_web_deps.sh --with-draco` para embutir o
-  decodificador em `assets/web/vendor/libs/draco/`.
+  Se usar Draco, embuta o decodificador com
+  `tool/fetch_web_deps.sh --with-draco` (Linux/macOS) ou
+  `powershell -ExecutionPolicy Bypass -File tool\fetch_web_deps.ps1 -WithDraco`
+  (Windows).
 - Convencao de eixos: o modelo deve olhar para **-Z** e ter os pes em **Y=0**.
   Se ele nascer deitado ou de costas, corrija na exportacao (o carregador nao
   aplica rotacao corretiva de proposito, para nao mascarar assets errados).

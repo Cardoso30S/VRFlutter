@@ -77,8 +77,18 @@
     }
 
     head('./vendor/three.module.js').then(function (hasLocal) {
+      // Modo offline: mapeamos cada addon EXPLICITAMENTE para um arquivo na
+      // raiz de vendor/. Assim a pasta fica plana e a unica linha
+      // `- assets/web/vendor/` no pubspec.yaml ja cobre tudo - o Flutter nao
+      // inclui assets recursivamente, e subpastas exigiriam editar o pubspec
+      // a cada dependencia nova.
       var map = hasLocal
-        ? { three: './vendor/three.module.js', 'three/addons/': './vendor/' }
+        ? {
+            three: './vendor/three.module.js',
+            'three/addons/loaders/GLTFLoader.js': './vendor/GLTFLoader.js',
+            'three/addons/loaders/DRACOLoader.js': './vendor/DRACOLoader.js',
+            'three/addons/utils/SkeletonUtils.js': './vendor/SkeletonUtils.js'
+          }
         : { three: CDN + 'build/three.module.js', 'three/addons/': CDN + 'examples/jsm/' };
 
       var tag = document.createElement('script');
