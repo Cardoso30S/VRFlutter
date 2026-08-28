@@ -201,24 +201,48 @@ objeto é escondido (a névoa já o esconderia).
 
 ## 6. Como rodar
 
+> **O primeiro comando é obrigatório.** Este repositório **não contém**
+> `android/` nem `ios/` — só os arquivos de plataforma específicos da VR
+> (`AndroidManifest.xml`, `Info.plist`, `MainActivity.kt`). O resto é
+> boilerplate que o Flutter gera e que muda a cada versão do SDK.
+> Sem gerá-lo, `flutter run` falha com **"Build failed due to use of deleted
+> Android v1 embedding"** — o Flutter não acha `android/build.gradle`, conclui
+> que o projeto não usa Gradle, procura o manifesto no caminho antigo
+> (`android/AndroidManifest.xml`) e assume a v1.
+
+**Linux / macOS**
+
 ```bash
 git clone <este-repo> && cd VRFlutter
 
-# 1) Gera android/ e ios/ preservando os arquivos de plataforma versionados
-tool/setup.sh
+tool/setup.sh                    # 1) gera android/ e ios/
+tool/fetch_web_deps.sh           # 2) embute o three.js (+ --with-draco se precisar)
+flutter analyze && flutter test  # 3)
+flutter run --release            # 4) SEMPRE em release
+```
 
-# 2) (Recomendado) Embute o three.js para funcionar 100% offline
-tool/fetch_web_deps.sh           # + --with-draco se seus .glb forem comprimidos
-tool/sync_pubspec_assets.sh
+**Windows (PowerShell)**
 
-# 3) SEMPRE em release para medir FPS real — o modo debug do Flutter
-#    e o JIT do WebView distorcem completamente a medição
+```powershell
+git clone <este-repo>; cd VRFlutter
+
+powershell -ExecutionPolicy Bypass -File tool\setup.ps1
+powershell -ExecutionPolicy Bypass -File tool\fetch_web_deps.ps1
+flutter analyze; flutter test
 flutter run --release
 ```
 
+Os scripts `.sh` **não** funcionam no PowerShell sem WSL com uma distro
+instalada; use os `.ps1`. Eles fazem exatamente a mesma coisa.
+
+`setup.sh`/`setup.ps1` rodam `flutter create` **sem `--overwrite`**, então
+todo arquivo já existente é preservado — `pubspec.yaml`, `lib/`, `README.md` e
+os arquivos de plataforma acima. Nunca acrescente `--overwrite`.
+
 Sem o passo 2 o app ainda funciona: `index.html` detecta a ausência de
 `assets/web/vendor/` e cai para o CDN jsDelivr (exige rede no primeiro
-carregamento).
+carregamento). Os arquivos são gravados **planos** na raiz de `vendor/`, que já
+está declarada no `pubspec.yaml` — nenhum ajuste é necessário.
 
 ### Requisitos mínimos
 
@@ -324,7 +348,7 @@ assets/web/
 
 assets/models/                       .glb opcionais + manifest.json
 test/vr_math_test.dart               testes de orientação, colisão e input
-tool/                                setup, fetch de dependências web
+tool/                                setup e fetch de deps (.sh e .ps1)
 ```
 
 ① leitor de giroscópio e cálculo de orientação · ② widget da cena VR com

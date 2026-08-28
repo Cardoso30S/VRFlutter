@@ -39,14 +39,14 @@ const CULL_DISTANCE = 110;  // metros
 async function makeLoader(log) {
   const loader = new GLTFLoader();
   try {
-    const probe = await fetch('/assets/web/vendor/libs/draco/draco_decoder.js', {
+    const probe = await fetch('/assets/web/vendor/draco_decoder.js', {
       method: 'GET',
       cache: 'force-cache',
     });
     if (probe.ok) {
       const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
       const draco = new DRACOLoader();
-      draco.setDecoderPath('/assets/web/vendor/libs/draco/');
+      draco.setDecoderPath('/assets/web/vendor/');
       loader.setDRACOLoader(draco);
       log('Draco habilitado');
     }
