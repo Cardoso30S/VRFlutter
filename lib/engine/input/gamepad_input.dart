@@ -14,38 +14,41 @@ import '../vr_state.dart';
 class GamepadInput {
   final Set<LogicalKeyboardKey> _pressed = <LogicalKeyboardKey>{};
 
-  static const Set<LogicalKeyboardKey> _forward = <LogicalKeyboardKey>{
+  // Precisam ser `final` e nao `const`: no Dart 3 uma colecao constante exige
+  // elementos com igualdade primitiva, e `LogicalKeyboardKey` sobrescreve o
+  // `==`. Como sao `static`, continuam sendo criadas uma unica vez.
+  //
+  // Nao existem `gameButtonUp/Down/Left/Right` no Flutter - e nao fazem falta:
+  // o D-pad dos gamepads Bluetooth chega ao Flutter como as teclas de seta.
+  static final Set<LogicalKeyboardKey> _forward = <LogicalKeyboardKey>{
     LogicalKeyboardKey.arrowUp,
     LogicalKeyboardKey.keyW,
-    LogicalKeyboardKey.gameButtonUp,
   };
-  static const Set<LogicalKeyboardKey> _backward = <LogicalKeyboardKey>{
+  static final Set<LogicalKeyboardKey> _backward = <LogicalKeyboardKey>{
     LogicalKeyboardKey.arrowDown,
     LogicalKeyboardKey.keyS,
-    LogicalKeyboardKey.gameButtonDown,
   };
-  static const Set<LogicalKeyboardKey> _left = <LogicalKeyboardKey>{
+  static final Set<LogicalKeyboardKey> _left = <LogicalKeyboardKey>{
     LogicalKeyboardKey.arrowLeft,
     LogicalKeyboardKey.keyA,
-    LogicalKeyboardKey.gameButtonLeft,
   };
-  static const Set<LogicalKeyboardKey> _right = <LogicalKeyboardKey>{
+  static final Set<LogicalKeyboardKey> _right = <LogicalKeyboardKey>{
     LogicalKeyboardKey.arrowRight,
     LogicalKeyboardKey.keyD,
-    LogicalKeyboardKey.gameButtonRight,
   };
-  static const Set<LogicalKeyboardKey> _run = <LogicalKeyboardKey>{
+  static final Set<LogicalKeyboardKey> _run = <LogicalKeyboardKey>{
     LogicalKeyboardKey.shiftLeft,
     LogicalKeyboardKey.shiftRight,
     LogicalKeyboardKey.gameButtonB,
   };
 
   /// Teclas que disparam o "gatilho" (equivalente ao botao do Cardboard).
-  static const Set<LogicalKeyboardKey> triggerKeys = <LogicalKeyboardKey>{
+  static final Set<LogicalKeyboardKey> triggerKeys = <LogicalKeyboardKey>{
     LogicalKeyboardKey.enter,
     LogicalKeyboardKey.space,
     LogicalKeyboardKey.select,
     LogicalKeyboardKey.gameButtonA,
+    LogicalKeyboardKey.gameButtonStart,
   };
 
   /// Processa um evento de teclado. Devolve `true` se o evento foi consumido.

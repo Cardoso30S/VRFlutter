@@ -159,7 +159,21 @@ Write-Host '================= DIAGNOSTICO =================' -ForegroundColor Cy
 Write-Host "  Android Gradle Plugin : $agpAtual"
 Write-Host "  Kotlin Gradle Plugin  : $ktAtual"
 Write-Host "  Gradle (wrapper)      : $(if ($gradleVer) { $gradleVer } else { 'nao detectado' })"
-Write-Host "  Java                  : $((& java -version 2>&1 | Select-String -Pattern 'version' | Select-Object -First 1))"
+# `java -version` escreve na saida de ERRO. Com $ErrorActionPreference='Stop',
+# o 2>&1 de um comando nativo vira ErrorRecord e o PowerShell aborta - por isso
+# baixamos o nivel so aqui.
+$javaVer = 'nao detectado'
+try {
+  $prevEA = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  $raw = (& java -version 2>&1 | Out-String)
+  $ErrorActionPreference = $prevEA
+  $line = ($raw -split "`r?`n" | Where-Object { $_ -match 'version' } | Select-Object -First 1)
+  if ($line) { $javaVer = $line.Trim() }
+} catch {
+  $ErrorActionPreference = 'Stop'
+}
+Write-Host "  Java                  : $javaVer"
 Write-Host '===============================================' -ForegroundColor Cyan
 Write-Host ''
 Write-Host 'Rode agora:' -ForegroundColor Green
