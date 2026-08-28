@@ -244,6 +244,40 @@ Sem o passo 2 o app ainda funciona: `index.html` detecta a ausência de
 carregamento). Os arquivos são gravados **planos** na raiz de `vendor/`, que já
 está declarada no `pubspec.yaml` — nenhum ajuste é necessário.
 
+### Se o Gradle falhar
+
+Os arquivos em `android/` são **boilerplate gerado pelo `flutter create`**, não
+código deste projeto. Dependendo da combinação Flutter × AGP × Kotlin Gradle
+Plugin instalada na máquina, o template sai com um DSL que o plugin presente
+não entende:
+
+```
+e: android/app/build.gradle.kts:38:5: Unresolved reference 'compilerOptions'
+Line 07: android {
+         ^ 'fun Project.android(...)' is deprecated.
+```
+
+Rode o corretor — ele é idempotente:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tool\fix_gradle.ps1   # Windows
+```
+```bash
+tool/fix_gradle.sh                                            # Linux/macOS
+```
+
+Ele aplica duas correções independentes:
+
+- **`android.newDsl=false`** em `android/gradle.properties`. A partir do AGP
+  9.0 o "novo DSL" é o padrão, e nele o bloco `android { }` clássico que o
+  template usa vira API depreciada com nível `ERROR` — o que quebra a
+  compilação do script Gradle.
+- **`kotlin { compilerOptions { jvmTarget = ... } }`** (exige KGP 2.1+) é
+  trocado por `tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "17" }`,
+  que funciona do KGP 1.8 ao 2.x.
+
+Depois: `flutter clean && flutter run --release`.
+
 ### Requisitos mínimos
 
 | | |
@@ -348,7 +382,7 @@ assets/web/
 
 assets/models/                       .glb opcionais + manifest.json
 test/vr_math_test.dart               testes de orientação, colisão e input
-tool/                                setup e fetch de deps (.sh e .ps1)
+tool/                                setup, deps web e fix do Gradle (.sh e .ps1)
 ```
 
 ① leitor de giroscópio e cálculo de orientação · ② widget da cena VR com

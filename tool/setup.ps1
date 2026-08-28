@@ -43,15 +43,21 @@ Remove-Item -Force -ErrorAction SilentlyContinue "test\widget_test.dart"
 Write-Host "3/4 Ajustando minSdk do Android" -ForegroundColor Cyan
 # flutter_inappwebview 6 exige minSdk 21+; usamos 24 pelo WebGL 2 e pelo
 # WebView moderno.
+# Set-Content -Encoding UTF8 grava COM BOM no Windows PowerShell 5.1, e um BOM
+# em arquivo .gradle.kts atrapalha o compilador de scripts do Gradle. Gravamos
+# UTF-8 sem BOM explicitamente.
+function Write-TextNoBom([string]$Path, [string]$Content) {
+  $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+  [System.IO.File]::WriteAllText((Resolve-Path $Path), $Content, $utf8NoBom)
+}
+
 $kts    = "android\app\build.gradle.kts"
 $groovy = "android\app\build.gradle"
 if (Test-Path $kts) {
-  (Get-Content $kts -Raw) -replace 'minSdk\s*=\s*flutter\.minSdkVersion', 'minSdk = 24' |
-    Set-Content $kts -NoNewline -Encoding UTF8
+  Write-TextNoBom $kts ((Get-Content $kts -Raw) -replace 'minSdk\s*=\s*flutter\.minSdkVersion', 'minSdk = 24')
   Write-Host "    build.gradle.kts -> minSdk = 24"
 } elseif (Test-Path $groovy) {
-  (Get-Content $groovy -Raw) -replace 'minSdkVersion\s+flutter\.minSdkVersion', 'minSdkVersion 24' |
-    Set-Content $groovy -NoNewline -Encoding UTF8
+  Write-TextNoBom $groovy ((Get-Content $groovy -Raw) -replace 'minSdkVersion\s+flutter\.minSdkVersion', 'minSdkVersion 24')
   Write-Host "    build.gradle -> minSdkVersion 24"
 } else {
   Write-Warning "    build.gradle nao encontrado - ajuste o minSdk para 24 na mao."
@@ -64,6 +70,7 @@ if ($LASTEXITCODE -ne 0) { Write-Error "flutter pub get falhou."; exit 1 }
 Write-Host ""
 Write-Host "Pronto. Proximos passos:" -ForegroundColor Green
 Write-Host "  powershell -ExecutionPolicy Bypass -File tool\fetch_web_deps.ps1"
+Write-Host "  powershell -ExecutionPolicy Bypass -File tool\fix_gradle.ps1   # se o Gradle reclamar"
 Write-Host "  flutter analyze"
 Write-Host "  flutter test"
 Write-Host "  flutter run --release      # SEMPRE em release para medir FPS real"
